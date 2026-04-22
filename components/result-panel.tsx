@@ -6,7 +6,28 @@ import { StoryboardTab } from "./storyboard-tab";
 import { PromptTab } from "./prompt-tab";
 import type { GenerateResponse } from "@/lib/types";
 
-export function ResultPanel({ result }: { result: GenerateResponse | null }) {
+export function ResultPanel({
+  result,
+  loading,
+}: {
+  result: GenerateResponse | null;
+  loading: boolean;
+}) {
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <div className="font-hand text-2xl text-gray-400 animate-pulse">
+            Generating your comic...
+          </div>
+          <p className="text-sm text-gray-300 mt-2">
+            Breaking down the joke → Writing storyboard → Crafting prompts
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!result) {
     return (
       <div className="flex-1 flex items-center justify-center">

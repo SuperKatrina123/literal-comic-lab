@@ -91,7 +91,7 @@ export default function Home() {
           onRegenerateAll={handleRegenerateAll}
           onRewritePanel4={handleRewritePanel4}
         />
-        <ResultPanel result={result} />
+        <ResultPanel result={result} loading={loading} />
       </main>
     </div>
   );
