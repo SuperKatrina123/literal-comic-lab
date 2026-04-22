@@ -1,4 +1,4 @@
-import { callClaude } from "@/lib/claude";
+import { callClaude, stripCodeFences } from "@/lib/claude";
 import type {
   IdeaBreakdown,
   StoryPanel,
@@ -55,5 +55,5 @@ export async function generateImagePrompt(
 ): Promise<PromptResult> {
   const userPrompt = buildUserPrompt(idea, storyboard, style);
   const raw = await callClaude(SYSTEM_PROMPT, userPrompt);
-  return JSON.parse(raw);
+  return JSON.parse(stripCodeFences(raw));
 }

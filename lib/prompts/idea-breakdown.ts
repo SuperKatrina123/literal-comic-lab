@@ -1,4 +1,4 @@
-import { callClaude } from "@/lib/claude";
+import { callClaude, stripCodeFences } from "@/lib/claude";
 import type { IdeaBreakdown, GenerateRequest } from "@/lib/types";
 
 const SYSTEM_PROMPT = `You are a comedy writer who deconstructs jokes and memes into structured components. Given a phrase, slogan, or comic idea, break it down into a comedic premise.
@@ -36,6 +36,6 @@ export async function generateIdeaBreakdown(
 ): Promise<IdeaBreakdown> {
   const userPrompt = buildUserPrompt(input, style, tone, absurdity);
   const raw = await callClaude(SYSTEM_PROMPT, userPrompt);
-  const parsed = JSON.parse(raw);
+  const parsed = JSON.parse(stripCodeFences(raw));
   return { rawInput: input, ...parsed };
 }

@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Literal Comic Lab
+
+Turn any joke or meme idea into a structured 4-panel comic breakdown with AI-generated image prompts.
+
+## Features
+
+- **Idea Breakdown** — Deconstructs your input into title, core joke, normal world, twist, and final payoff
+- **4-Panel Storyboard** — Generates setup → trigger → twist → payoff with scene, action, and dialogue
+- **Image Prompt Generation** — Produces style prompt + full prompt ready for Gemini / Midjourney / DALL-E
+- **Rewrite Panel 4** — Regenerate just the punchline panel for a fresh take
+- **Style & Tone Controls** — Cartoon / pixel art / manga styles, witty / absurd / dry tones, absurdity slider
+
+## Tech Stack
+
+- Next.js 16 (App Router) + TypeScript
+- Tailwind CSS + shadcn/ui
+- Anthropic Claude API (3-step generation pipeline)
+- Inter + Caveat (Google Fonts)
 
 ## Getting Started
 
-First, run the development server:
+```bash
+npm install
+```
+
+Create `.env.local`:
+
+```env
+ANTHROPIC_API_KEY=your-api-key
+ANTHROPIC_BASE_URL=https://api.anthropic.com  # optional, for custom endpoints
+```
+
+Run the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+app/
+  page.tsx              # Main single-page app
+  api/generate/         # 3-step pipeline: idea → storyboard → prompt
+  api/rewrite-payoff/   # Rewrite panel 4 only
+components/
+  input-panel.tsx       # Left: textarea, style/tone controls, buttons
+  result-panel.tsx      # Right: tabbed results (Idea / Storyboard / Prompt)
+  idea-tab.tsx          # Joke breakdown cards
+  storyboard-tab.tsx    # 2x2 panel grid
+  prompt-tab.tsx        # Copyable prompt blocks
+lib/
+  claude.ts             # Anthropic SDK wrapper
+  types.ts              # TypeScript types
+  mock-data.ts          # Mock response for development
+  prompts/
+    idea-breakdown.ts   # Step 1: comedy writer prompt
+    storyboard.ts       # Step 2: storyboard artist prompt
+    image-prompt.ts     # Step 3: image prompt expert
+```

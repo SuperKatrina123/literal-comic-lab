@@ -1,4 +1,4 @@
-import { callClaude } from "@/lib/claude";
+import { callClaude, stripCodeFences } from "@/lib/claude";
 import type { IdeaBreakdown, StoryPanel, GenerateRequest } from "@/lib/types";
 
 const SYSTEM_PROMPT = `You are a comic storyboard artist. Given a joke breakdown, create a 4-panel storyboard.
@@ -48,7 +48,7 @@ export async function generateStoryboard(
 ): Promise<StoryPanel[]> {
   const userPrompt = buildUserPrompt(idea, style, tone, absurdity);
   const raw = await callClaude(SYSTEM_PROMPT, userPrompt);
-  return JSON.parse(raw);
+  return JSON.parse(stripCodeFences(raw));
 }
 
 export async function rewritePanel4(
@@ -81,5 +81,5 @@ Absurdity level: ${absurdity}/5
 Write a DIFFERENT panel 4 that still pays off the joke in a fresh way.`;
 
   const raw = await callClaude(rewriteSystem, userPrompt);
-  return JSON.parse(raw);
+  return JSON.parse(stripCodeFences(raw));
 }
