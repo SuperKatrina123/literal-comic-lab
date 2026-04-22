@@ -3,8 +3,11 @@
 import { useState } from "react";
 import { InputPanel } from "@/components/input-panel";
 import { ResultPanel } from "@/components/result-panel";
-import { MOCK_RESPONSE } from "@/lib/mock-data";
-import type { GenerateRequest, GenerateResponse } from "@/lib/types";
+import type {
+  GenerateRequest,
+  GenerateResponse,
+  RewritePayoffResponse,
+} from "@/lib/types";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -16,9 +19,20 @@ export default function Home() {
 
   const handleGenerate = async () => {
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setResult({ ...MOCK_RESPONSE, idea: { ...MOCK_RESPONSE.idea, rawInput: input } });
-    setLoading(false);
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ input, style, tone, absurdity }),
+      });
+      if (!res.ok) throw new Error("Generation failed");
+      const data: GenerateResponse = await res.json();
+      setResult(data);
+    } catch {
+      alert("Generation failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRegenerateAll = () => {
@@ -28,8 +42,26 @@ export default function Home() {
   const handleRewritePanel4 = async () => {
     if (!result) return;
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setLoading(false);
+    try {
+      const res = await fetch("/api/rewrite-payoff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idea: result.idea,
+          storyboard: result.storyboard,
+          style,
+          tone,
+          absurdity,
+        }),
+      });
+      if (!res.ok) throw new Error("Rewrite failed");
+      const data: RewritePayoffResponse = await res.json();
+      setResult({ ...result, storyboard: data.storyboard, prompt: data.prompt });
+    } catch {
+      alert("Rewrite failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
